@@ -1,3 +1,7 @@
+.body{
+  background: #e0eded; // Added background color
+}
+
 .row {
   margin-bottom: 10px;
   display: flex;
@@ -18,4 +22,16 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
+}
+
+.row {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+.row label {
+  width: 120px;
+}
+.content {
+  margin: 0 auto;
 }

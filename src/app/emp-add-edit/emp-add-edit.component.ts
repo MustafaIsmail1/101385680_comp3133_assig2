@@ -5,50 +5,25 @@ import { CoreService } from '../core/core.service';
 import { EmployeeService } from '../services/employee.service';
 import { catchError } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
+import { Apollo, gql } from 'apollo-angular';
+import { Router } from '@angular/router';
+
 const UPDATE_EMPLOYEE_MUTATION = gql`
-  mutation UpdateEmployee(
-    $id: String!
-    $firstname: String
-    $lastname: String
-    $email: String
-    $gender: String
-    $salary: Float
-  ) {
-    updateEmployeeById(
-      id: $id
-      firstname: $firstname
-      lastname: $lastname
-      email: $email
-      gender: $gender
-      salary: $salary
-    ) {
-      id
+  mutation UpdateEmployeeById($id: ID!, $employee: EmployeeInput!) {
+    updateEmployeeById(id: $id){
       firstname
       lastname
       email
       gender
       salary
-    }
+    } 
   }
 `;
 
-import { Apollo, gql } from 'apollo-angular';
-import { Router } from '@angular/router';
 const ADD_EMPLOYEE_MUTATION = gql`
-  mutation AddEmployee(
-    $firstname: String!
-    $lastname: String!
-    $email: String!
-    $gender: String!
-    $salary: Float!
-  ) {
-    addEmployee(
-      firstname: $firstname
-      lastname: $lastname
-      email: $email
-      gender: $gender
-      salary: $salary
-    ) {
+  mutation AddEmployee($employee: EmployeeInput!) {
+    addEmployee(employee: $employee) {
+      id
       firstname
       lastname
       email
@@ -65,17 +40,15 @@ const ADD_EMPLOYEE_MUTATION = gql`
 })
 export class EmpAddEditComponent implements OnInit {
   empForm: FormGroup;
-  emailError: any
-  
+  emailError: any;
 
   constructor(
-    private router : Router,
+    private router: Router,
     private _fb: FormBuilder,
     private _empService: EmployeeService,
     private _dialogRef: MatDialogRef<EmpAddEditComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private _coreService: CoreService,
-    
     private apollo: Apollo
   ) {
     this.empForm = this._fb.group({
@@ -83,7 +56,7 @@ export class EmpAddEditComponent implements OnInit {
       lastname: '',
       email: '',
       gender: '',
-      salary:''
+      salary: '',
     });
   }
 
@@ -93,77 +66,36 @@ export class EmpAddEditComponent implements OnInit {
 
   onFormSubmit() {
     if (this.empForm.valid) {
+      const employeeData = this.empForm.value;
       if (this.data) {
-        if (this.data) {
-          const updatedEmployee = {
-            id: this.data.id,
-            ...this.empForm.value
-          };
-        
-        this.apollo.mutate({
-          mutation: UPDATE_EMPLOYEE_MUTATION,
-          variables: updatedEmployee
-        }).subscribe({
+        employeeData.id = this.data.id;
+      }
+
+      const mutation = this.data ? UPDATE_EMPLOYEE_MUTATION : ADD_EMPLOYEE_MUTATION;
+      const mutationVariables = this.data ? { id: employeeData.id, employee: employeeData } : { employee: employeeData };
+
+      this.apollo
+        .mutate({
+          mutation,
+          variables: mutationVariables,
+        })
+        .subscribe({
           next: (val: any) => {
-            const errorData = val?.data?.updateEmployeeById;
-            console.log(errorData)
-            if (errorData.email.includes('Validator failed for')) {
-            
-              this._coreService.openSnackBar('Employee Email validation Failed!');
-            } else {
-              this._coreService.openSnackBar('Employee updated successfully');
-              this._dialogRef.close(true);
-                      }
-            
-            console.log(val)
+            const message = this.data ? 'updated' : 'added';
+            this._coreService.openSnackBar(`Employee ${message} successfully`);
+            this._dialogRef.close(true);
+            if (!this.data) {
+              setTimeout(() => {
+                window.location.reload();
+              }, 1800);
+            }
           },
           error: (err: any) => {
             console.error(err);
-            const errorData = err?.error?.data?.updateEmployeeById;
-            if (errorData && errorData.email) {
-              this.emailError = errorData.email;
-            } else {
-              this._coreService.openSnackBar('Failed to update employee');
-            }
+            const errorMessage = err?.error?.message || 'Failed to perform action';
+            this._coreService.openSnackBar(errorMessage);
           },
         });
-          }
-           } else {
-
-            this.apollo.mutate({
-              mutation: ADD_EMPLOYEE_MUTATION,
-              variables: this.empForm.value
-            }).subscribe({
-              next: (val: any) => {
-                const errorData = val?.data?.addEmployee;
-                console.log(errorData)
-                if (errorData.email.includes('Validator failed for')) {
-                
-                  this._coreService.openSnackBar('Employee Email validation Failed!');
-                } else {
-                  this._coreService.openSnackBar('Employee added successfully');
-                  this._dialogRef.close(true);
-                  setTimeout(() => {
-                    window.location.reload();
-                  }, 1800);
-                  
-                          }
-                
-                console.log(val)
-              },
-              error: (err: any) => {
-                console.error(err);
-                const errorData = err?.error?.data?.addEmployee;
-                if (errorData && errorData.email) {
-                  this.emailError = errorData.email;
-                } else {
-                  this._coreService.openSnackBar('Failed to add employee');
-                }
-              },
-            });
-            
-        
-      }
-      }
+    }
   }
 }
