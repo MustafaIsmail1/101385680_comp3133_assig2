@@ -1,0 +1,43 @@
+body {
+  background-color: lightblue;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+mat-toolbar {
+  background-color: aliceblue;
+  color: black;
+}
+
+.mumu {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.main-body {
+  padding-top: 20px;
+  margin: 0 auto;
+  max-width: 1348px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.larger-icon {
+  font-size: 50px;
+}
+
+.action {
+  display: flex;
+  gap: 5px;
+}
+
+.add-employee-btn {
+  margin-right: 10px;
+  color: black;
+  background-color: aliceblue;
+}

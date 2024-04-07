@@ -1,0 +1,44 @@
+<body>
+    <div class="session">
+      <div class="left">
+       
+      </div>
+      <form [formGroup]="signUpForm" (ngSubmit)="onFormSubmit()"> 
+        
+        <h4 class="title">Sign Up!</h4>
+        <div mat-dialog-content class="content">
+            <div class="row">
+        <mat-form-field appearance="outline">
+            <mat-label>User Name </mat-label>
+            <input matInput type="text" placeholder="name00" formControlName="username" required>
+        </mat-form-field>
+    </div>
+       
+       
+        </div>
+        <div mat-dialog-content class="content">
+            <div class="row">
+        <mat-form-field appearance="outline">
+            <mat-label>Email </mat-label>
+            <input matInput type="text" placeholder="name@something.com" formControlName="email" required>
+        </mat-form-field>
+    </div>
+    </div>
+        <div mat-dialog-content class="content">
+            <div class="row">
+        <mat-form-field appearance="outline">
+            <mat-label>Password </mat-label>
+            <input matInput type="password" placeholder="Password here.." formControlName="password" required>
+        </mat-form-field>
+    </div>
+       
+      
+        </div>
+        <div mat-dialog-actions class="action">
+            <button mat-raised-button routerLink="/login" type="button">Login</button>
+            <button mat-raised-button type="submit">Submit </button>
+
+      </div>
+      </form>
+    </div>
+  </body>
