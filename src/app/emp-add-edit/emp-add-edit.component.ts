@@ -9,8 +9,8 @@ import { Apollo, gql } from 'apollo-angular';
 import { Router } from '@angular/router';
 
 const UPDATE_EMPLOYEE_MUTATION = gql`
-  mutation UpdateEmployeeById($id: ID!, $employee: EmployeeInput!) {
-    updateEmployeeById(id: $id){
+  mutation UpdateEmployeeById($id: ID!) {
+    updateEmployeeById(id:, $id, employee: $employee){
       firstname
       lastname
       email

@@ -25,8 +25,12 @@
   
             <div class="row">
                 <mat-form-field appearance="outline">
-                    <mat-label>Gender male, female, other</mat-label>
-                    <input matInput placeholder="Gender" formControlName="gender" required>
+                    <mat-label>Gender</mat-label>
+                    <mat-select formControlName="gender" required>
+                        <mat-option value="Male">Male</mat-option>
+                        <mat-option value="Female">Female</mat-option>
+                        <mat-option value="Other">Other</mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
   
@@ -42,5 +46,4 @@
             <button mat-raised-button color="primary" type="submit">{{data ? 'Update': 'Save'}}</button>
         </div>
     </form>
-  </div>
-  
+</div>
